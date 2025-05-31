@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function App() {
+function App() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -11,10 +11,8 @@ export default function App() {
     maritalStatus: "",
     numberOfDependency: "",
     city: "",
-    state: "",
+    state: ""
   });
-
-  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -26,21 +24,18 @@ export default function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("Submitting...");
+
     try {
       const res = await fetch("http://localhost:5000/api/borrower/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          monthlyIncome: Number(formData.monthlyIncome),
-          previousLoan: Boolean(formData.previousLoan),
-          numberOfDependency: Number(formData.numberOfDependency),
-        }),
+        body: JSON.stringify(formData),
       });
+
       const data = await res.json();
+
       if (res.ok) {
-        setMessage("Successfully submitted!");
+        alert("✅ Form submitted successfully!");
         setFormData({
           name: "",
           email: "",
@@ -51,126 +46,38 @@ export default function App() {
           maritalStatus: "",
           numberOfDependency: "",
           city: "",
-          state: "",
+          state: ""
         });
       } else {
-        setMessage(data.error || "Submission failed");
+        alert("❌ Error: " + (data.error || "Server error"));
       }
-    } catch (error) {
-      setMessage("Error submitting form");
+    } catch (err) {
+      alert("❌ Error submitting form. Check backend is running.");
+      console.error(err);
     }
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
-      <h2>Borrower Signup</h2>
+    <div style={{ maxWidth: "500px", margin: "auto", padding: "1rem" }}>
+      <h2>Borrower Sign Up</h2>
       <form onSubmit={handleSubmit}>
+        <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required /><br /><br />
+        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required /><br /><br />
+        <input type="tel" name="phone" placeholder="Phone" value={formData.phone} onChange={handleChange} required /><br /><br />
+        <input type="text" name="residenceType" placeholder="Residence Type" value={formData.residenceType} onChange={handleChange} required /><br /><br />
+        <input type="number" name="monthlyIncome" placeholder="Monthly Income" value={formData.monthlyIncome} onChange={handleChange} required /><br /><br />
         <label>
-          Name:<br />
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
+          Previous Loan: 
+          <input type="checkbox" name="previousLoan" checked={formData.previousLoan} onChange={handleChange} />
         </label><br /><br />
-
-        <label>
-          Email:<br />
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </label><br /><br />
-
-        <label>
-          Phone:<br />
-          <input
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
-        </label><br /><br />
-
-        <label>
-          Residence Type:<br />
-          <input
-            type="text"
-            name="residenceType"
-            value={formData.residenceType}
-            onChange={handleChange}
-          />
-        </label><br /><br />
-
-        <label>
-          Monthly Income:<br />
-          <input
-            type="number"
-            name="monthlyIncome"
-            value={formData.monthlyIncome}
-            onChange={handleChange}
-          />
-        </label><br /><br />
-
-        <label>
-          Previous Loan:<br />
-          <input
-            type="checkbox"
-            name="previousLoan"
-            checked={formData.previousLoan}
-            onChange={handleChange}
-          />
-        </label><br /><br />
-
-        <label>
-          Marital Status:<br />
-          <input
-            type="text"
-            name="maritalStatus"
-            value={formData.maritalStatus}
-            onChange={handleChange}
-          />
-        </label><br /><br />
-
-        <label>
-          Number of Dependency:<br />
-          <input
-            type="number"
-            name="numberOfDependency"
-            value={formData.numberOfDependency}
-            onChange={handleChange}
-          />
-        </label><br /><br />
-
-        <label>
-          City:<br />
-          <input
-            type="text"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-          />
-        </label><br /><br />
-
-        <label>
-          State:<br />
-          <input
-            type="text"
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-          />
-        </label><br /><br />
-
+        <input type="text" name="maritalStatus" placeholder="Marital Status" value={formData.maritalStatus} onChange={handleChange} required /><br /><br />
+        <input type="number" name="numberOfDependency" placeholder="Number of Dependencies" value={formData.numberOfDependency} onChange={handleChange} required /><br /><br />
+        <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} required /><br /><br />
+        <input type="text" name="state" placeholder="State" value={formData.state} onChange={handleChange} required /><br /><br />
         <button type="submit">Submit</button>
       </form>
-      <p>{message}</p>
     </div>
   );
 }
+
+export default App;
